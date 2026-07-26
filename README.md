@@ -25,18 +25,7 @@ npx aws-serverless-skills claude-code
 npx aws-serverless-skills claude-code-project   # run from inside the target project's directory
 npx aws-serverless-skills claude-desktop
 ```
-
-### Option B: clone + install.sh
-
-Same behavior, for anyone who already has this repo checked out:
-
-```bash
-./install.sh
-./install.sh codex
-./install.sh claude-code
-./install.sh claude-code-project
-./install.sh claude-desktop
-```
+ 
 
 ### What each target does
 
@@ -45,8 +34,7 @@ Same behavior, for anyone who already has this repo checked out:
 - **Claude Code (project)** — copies to `./.claude/skills/aws-serverless-skills` in whatever directory you run it from.
 - **Claude Desktop** — builds `./dist/aws-serverless-skills.zip`. Claude Desktop loads skills as an uploaded zip, not from the filesystem, so upload it manually: **Settings → Capabilities → Skills → Upload**. Re-run and re-upload after any update.
 
-Re-run the install command after any update to `SKILL.md` or `references/` — each target
-keeps an independent copy that isn't updated automatically.
+ 
 
 ## Using it
 
@@ -57,12 +45,3 @@ commands, documented in `SKILL.md`:
 - **`/aws-serverless-skills init`** — read-only project discovery. Reads your IaC, handler code, and service wiring; asks clarifying questions where needed; then writes a `PROJECT_STRUCTURE.md` at the repo root capturing the IaC tool, language/runtimes, AWS services inventory, and event/request flows. Makes no code changes. Run this once per project — `audit` reads `PROJECT_STRUCTURE.md` as context.
 - **`/aws-serverless-skills audit`** — read-only review of the current project against the full checklist, reported as `MUST FIX` / `SHOULD FIX` / `OK`.
 
-## Publishing (maintainers)
-
-The npx flow requires this package to be published to npm as `aws-serverless-skills`:
-
-```bash
-npm publish
-```
-
-Bump `version` in `package.json` first for any subsequent release.
