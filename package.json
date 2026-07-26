@@ -1,0 +1,32 @@
+{
+  "name": "aws-serverless-skills",
+  "version": "1.3.0",
+  "description": "AWS serverless best-practices skill for Claude Code, Claude Desktop, and Codex. Install with npx, no clone required.",
+  "bin": {
+    "aws-serverless-skills": "bin/install.js"
+  },
+  "files": [
+    "bin",
+    "SKILL.md",
+    "references"
+  ],
+  "keywords": [
+    "claude",
+    "claude-code",
+    "claude-desktop",
+    "codex",
+    "aws",
+    "serverless",
+    "skill",
+    "agent-skill"
+  ],
+  "homepage": "https://github.com/gunjchhetri/aws-serverless-skills",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gunjchhetri/aws-serverless-skills.git"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=16.7.0"
+  }
+}
