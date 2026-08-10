@@ -17,6 +17,9 @@
 - Every SQS-triggered compute needs a DLQ with a bounded `maxReceiveCount` and an alarm on DLQ depth.
 - Set visibility timeout to at least 6x the consumer's timeout.
 - Enable partial batch failure reporting (`reportBatchItemFailures`) so one bad record doesn't force a full-batch retry.
+- Set `ReceiveMessageWaitTimeSeconds = 20` (long polling) on every queue. Short polling (0s) issues a new receive call every few seconds per queue — 10+ idle queues exhaust the 1M/month free tier in ~7 days and generate real charges. Lambda SQS triggers work correctly with long polling; it only delays the return of _empty_ responses, not message delivery.
+- Use a single SQS queue per logical processing domain rather than one queue per job type. Include a discriminator field (e.g. `type`, `jobType`) in the message body and route it inside the lambda.
+  - **Switch/case in a shared Lambda handler** — one function, one ESM, routes internally. Simpler when jobs share infra (same DLQ, visibility timeout, concurrency limits).
 
 ## SNS
 
@@ -34,4 +37,3 @@
 - Use Pipes for source → filter → enrich → transform → target instead of a pass-through Lambda.
 - Supported sources: SQS, Kinesis, DynamoDB Streams, MSK, MQ. Supported targets: Lambda, Step Functions, EventBridge bus, SQS, SNS, HTTP endpoint, and more.
 - A Pipe counts as a single consumer against the source stream/queue while still routing to many targets.
- 

@@ -62,21 +62,20 @@ Read-only review against this skill's full checklist — makes no code or IaC ch
 - Check the code/IaC against Service Selection, Hard Rules, and Default Practices.
 - Report findings using the Output Expectations format below (`MUST FIX` / `SHOULD FIX` / `OK`), ordered by severity.
 
-
 ## Service Selection
 
-| Need | Prefer | Avoid / use only with reason |
-|---|---|---|
-| Multi-step orchestration | Step Functions | Lambda chaining |
-| High-volume short workflows | Step Functions Express | Standard by default |
-| Single async handoff | Lambda async invoke or SQS | SNS with one subscriber |
-| Work queue / backpressure | SQS Standard | Direct fan-out to slow consumers |
-| Ordering / dedupe | SQS FIFO | Kinesis for ordering |
-| Multi-consumer domain event | EventBridge or SNS->SQS | Lambda if/else routing |
-| Large object upload/download | S3 presigned URLs | API Gateway proxying large files |
-| Public HTTP API | HTTP API | REST API unless a REST-only feature is required |
-| S3 analytics | Athena + Glue + Parquet | Lambda scanning S3 files |
-| Scheduled / cron jobs | EventBridge Scheduler | legacy eventbridge scheduler |
+| Need                         | Prefer                     | Avoid / use only with reason                    |
+| ---------------------------- | -------------------------- | ----------------------------------------------- |
+| Multi-step orchestration     | Step Functions             | Lambda chaining                                 |
+| High-volume short workflows  | Step Functions Express     | Standard by default                             |
+| Single async handoff         | Lambda async invoke or SQS | SNS with one subscriber                         |
+| Work queue / backpressure    | SQS Standard               | Direct fan-out to slow consumers                |
+| Ordering / dedupe            | SQS FIFO                   | Kinesis for ordering                            |
+| Multi-consumer domain event  | EventBridge or SNS->SQS    | Lambda if/else routing                          |
+| Large object upload/download | S3 presigned URLs          | API Gateway proxying large files                |
+| Public HTTP API              | HTTP API                   | REST API unless a REST-only feature is required |
+| S3 analytics                 | Athena + Glue + Parquet    | Lambda scanning S3 files                        |
+| Scheduled / cron jobs        | EventBridge Scheduler      | legacy eventbridge scheduler                    |
 
 ## Hard Rules
 
@@ -88,7 +87,7 @@ Read-only review against this skill's full checklist — makes no code or IaC ch
 - Do not add a service hop with no reliability, scale, fan-out, or operational value.
 - Always delete the previous lambda layer version when deploying a new version.
 - Always add max retries, default it to 3 for all async invocations like, sqs, dynamodb streams, kinesis streams.
-- 
+-
 
 ## Default Practices
 
@@ -107,6 +106,8 @@ Before finalizing a design, check:
 - Can DynamoDB stay on-demand until traffic stabilizes?
 - Are logs, traces, and retained payloads bounded?
 - Is any service hop adding cost without adding value?
+- Do CloudFront invalidations use `/*` instead of per-file paths? (1k free paths/month; per-file enumeration across rapid redeploys can spike cost really soon
+- Are all SQS queues using long polling (`ReceiveMessageWaitTimeSeconds = 20`)? Short polling on 10+ idle queues exhausts the 1M/month free tier in ~7 days.
 
 ## Reference Map
 
@@ -116,11 +117,11 @@ Load only the files relevant to the current task:
 - `references/step-functions.md`: Express vs Standard, Map concurrency, callbacks, idempotency.
 - `references/messaging.md`: SQS, SNS, EventBridge, Pipes, Kinesis, Firehose.
 - `references/dynamodb.md`: access patterns, keys, GSIs, Streams, TTL, capacity, DAX.
-- `references/storage.md`: S3 lifecycle, CloudFront/OAC, presigned URLs.
+- `references/storage.md`: S3 lifecycle, presigned URLs, storage classes.
+- `references/cloudfront.md`: distributions, price classes, invalidation cost patterns.
 - `references/api-gateway.md`: HTTP vs REST, auth, throttling, payload limits.
 - `references/observability.md`: Powertools, X-Ray, logs, alarms, metrics.
 - `references/data-analytics.md`: Athena, Glue, Firehose, OpenSearch.
-
 
 ## Output Expectations
 
@@ -134,5 +135,6 @@ End architecture or implementation responses with:
 
 ```markdown
 ## Serverless Design Decisions
+
 - [Choice] -> [Why]
 ```
